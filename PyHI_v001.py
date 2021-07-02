@@ -502,8 +502,16 @@ class MainWindow(QMainWindow):
 
             
         self.buttons_rs['Add points:'].setToolTip('Add a group of points by specifying:\n(x_low,x_high) and (y_low, y_high) in pixel/angstrom')
-        self.text_fields_rs[0].setToolTip('Set X coordinate range of the plot (low, high)\nHover mouse on plot to find coordinates\nNo need if refinement is successful')
-        self.text_fields_rs[1].setToolTip('Set Y coordinate range of the plot (low, high)\nHover mouse on plot to find coordinates')
+        self.text_fields_rs[0].setToolTip('''Set X coordinate range of the plot (low, high)\n
+        Hover mouse on plot and read the coordinates at the right side of the toolbar
+        Note: this is not the azimuthal angle as labelled on the X-axis
+        Normally set autmatically if refinement is successful
+        ''')
+
+        self.text_fields_rs[1].setToolTip('''Set Y coordinate range of the plot (low, high)\n
+        Hover mouse on plot and read the coordinates at the right side of the toolbar
+        ''')
+
         self.buttons_rs['Label On/Off'].setToolTip('Label points with (h, k) index')
         self.buttons_rs['Seq. On/Off'].setToolTip('Label points with 1-start helix sequential number')
 
@@ -583,8 +591,8 @@ class MainWindow(QMainWindow):
         Adjust base vectors and repeat if:
         Lattice points do not match peaks in the power spectrum
         Residual after refinement (printed in terminal) is not zero (\U0001F61F).\n
-        If successful (\U0001f642), click "real space lattice" tab to see the helical symmetry in real space.
-        If "pix~1/\u212B" set correctly, "rise" in real space will have correct scale in angstrom.''') 
+        If successful (\U0001f642), real space lattice will be shown in the right panel.
+        If "pix~1/\u212B" set correctly, "rise" in real space will have correct scale in angstrom.\n''') 
 
         for txt, pos in boxes.items():
             if 'lw' in txt:
@@ -780,8 +788,8 @@ class MainWindow(QMainWindow):
             LL_distance = para_dict['Layerline distance']
             radius = para_dict['Helix radius']
 
-            self.orig_x_spinbox.setValue(0)
-            self.orig_y_spinbox.setValue(0)
+            #self.orig_x_spinbox.setValue(0)
+            #self.orig_y_spinbox.setValue(0)
             self.origin_x_click_value = self.origin[0]
             self.origin_y_click_value = self.origin[1]
 
