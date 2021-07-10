@@ -98,6 +98,7 @@ class MainWindow(QMainWindow):
         self.dist_line_in_2D = ''
 
         self.radius_H = 0
+        self.radius_error = 0
         self.ruler_width = 0
         self.ruler_height = 0
 
@@ -107,6 +108,8 @@ class MainWindow(QMainWindow):
         self.OneD_profile_line_scale = 1
         self.LL_amp_plot = ''
         self.LL_bessel_plot = ''
+        self.LL_bessel_plot_fill_low = ''
+        self.LL_bessel_plot_fill_hihg = ''
         self.LL_legend = ''
         self.LL_phase_plot = ''
         self.LL_phase_diff_ind = ''
@@ -329,20 +332,22 @@ class MainWindow(QMainWindow):
         }
 
         labels = {
-            'Measure': (0, 1, 1, 2),
-            'Radius of helix (\u212B):': (1, 0, 1, 2),
-            'Layerline plot parameters:': (3, 0, 1, 3),
-            'Y-coord range (pixel):': (4, 0, 1, 2),
-            'Plot width (pixel):': (5, 0, 1, 2),
-            'Bessel order (integer):': (6, 0, 1, 2),
-            'CC=': (7, 2, 1, 1),
+            'Measure': (0, 1, 1, 3),
+            'Radius (\u212B):': (1, 0, 1, 1),
+            '+/-': (1, 2, 1, 1),
+            'Layerline plot parameters:': (3, 0, 1, 4),
+            'Y-coord range (pixel):': (4, 0, 1, 3),
+            'Plot width (pixel):': (5, 0, 1, 3),
+            'Bessel order (integer):': (6, 0, 1, 3),
+            'CC=': (7, 3, 1, 1),
         }
 
         txt_fields = {
-            'helix_radius': (1, 2, 1, 1),
-            'LL_Y_range': (4, 2, 1, 1),
-            'LL_width': (5, 2, 1, 1),
-            'Bessel_order': (6, 2, 1, 1),
+            'helix_radius': (1, 1, 1, 1),
+            'radius_error': (1, 3, 1, 1),
+            'LL_Y_range': (4, 3, 1, 1),
+            'LL_width': (5, 3, 1, 1),
+            'Bessel_order': (6, 3, 1, 1),
         }
 
         for txt, pos in labels.items():
@@ -363,11 +368,15 @@ class MainWindow(QMainWindow):
         To get the radius of the helix, click the two side edges,
         radius will be automatically calculated and set.
         Radius can also be set manually by typing number into the field below.''')
+    
 
         for txt, pos in txt_fields.items():
             self.tab1_text_col2[txt] = QLineEdit()
             self.tab1_text_col2[txt].setMaximumWidth(60)
             layout.addWidget(self.tab1_text_col2[txt], pos[0], pos[1], pos[2], pos[3])
+
+        self.tab1_text_col2['helix_radius'].setToolTip('Set radius of the helix\nBy using the measure button or typing the number here')
+        self.tab1_text_col2['radius_error'].setToolTip('Set +/- range of the radius\nLeave it emtpy if unsure')
         self.tab1_text_col2['LL_Y_range'].setToolTip('''Set low and high bounds of the power spectrum for plotting
         Input two numbers separated by "," (Example: 2,3)
         Put two identical numbers (For example: 2,2) if only want to plot one pixel slice\n
@@ -635,9 +644,9 @@ class MainWindow(QMainWindow):
                 self.mrc_data_array = self.mrc_data_array.reshape(1, self.mrc_data_array.shape[0], self.mrc_data_array.shape[1])
 
             try:
-                x_pix = f.header.nx
-                x_dim = f.header.cella.x
-                self.angpix = x_dim/x_pix
+                y_pix = f.header.ny
+                y_dim = f.header.cella.y
+                self.angpix = y_dim/y_pix
                 if self.angpix == 0:
                     self.angpix = 1
                     QMessageBox.information(self, 'Alert', 'Could not read angpix\n Set to 1!')
@@ -674,9 +683,9 @@ class MainWindow(QMainWindow):
             with mrcfile.open(power_spec_filename[0], permissive=True) as f:
                 self.current_img_fft_amp = f.data
                 try:
-                    x_pix = f.header.nx
-                    x_dim = f.header.cella.x
-                    self.angpix = x_dim/x_pix
+                    y_pix = f.header.ny
+                    y_dim = f.header.cella.y
+                    self.angpix = y_dim/y_pix
                     if self.angpix == 0:
                         self.angpix = 1
                         QMessageBox.information(self, 'Alert', 'Could not read angpix\n Set to 1!')
@@ -870,6 +879,7 @@ class MainWindow(QMainWindow):
         self.tab1_text_col2['Bessel_order'].setText('')
         self.tab1_text_col2['helix_radius'].setText('')
         self.tab1_labels_col2['Measure'].setText('')
+        self.tab1_text_col2['radius_error'].setText('')
         self.contrast_high = 8
         self.contrast_low = -1
         self.minSigma_chooser.setValue(-1)
@@ -888,6 +898,10 @@ class MainWindow(QMainWindow):
             self.LL_amp_plot = ''
             self.LL_bessel_plot.remove()
             self.LL_bessel_plot = ''
+            self.LL_bessel_plot_fill_low.remove()
+            self.LL_bessel_plot_fill_low = ''
+            self.LL_bessel_plot_fill_high.remove()
+            self.LL_bessel_plot_fill_high = ''
             self.LL_legend.remove()
             self.LL_legend = ''
             self.LL_phase_plot.remove()
@@ -1261,9 +1275,17 @@ class MainWindow(QMainWindow):
             self.n_Bessel = int(self.tab1_text_col2['Bessel_order'].text())
             Y = self.tab1_text_col2['LL_Y_range'].text().split(',')
             self.radius_H = float(self.tab1_text_col2['helix_radius'].text())
+            try:
+                self.radius_error = float(self.tab1_text_col2['radius_error'].text())
+            except:
+                self.radius_error = 0
             if self.radius_H <= 0:
                 QMessageBox.information(self, 'Alert', 'To calculate layerline plot, \nHelix radius must be larger than 0!')
                 return
+            if self.radius_H <= self.radius_error:
+                QMessageBox.information(self, 'Alert', 'Radius error must be smaller than radius\nTry ~10% of radius')
+                return
+                
             Y1 = int(Y[0]) + int(self.origin[1])
             Y2 = int(Y[1]) + int(self.origin[1])
             if Y1>Y2:
@@ -1284,22 +1306,43 @@ class MainWindow(QMainWindow):
                 QMessageBox.information(self,'Alert', 'Angpix = 0')
                 Bessel_data = np.zeros_like(amp_data)
             else:
+                X_index_oversample = np.linspace(self.X_index[0],self.X_index[-1],5*len(self.X_index))
                 k = 2*math.pi*self.radius_H*(self.X_index/(self.current_img_fft_amp_rotated.shape[1]*self.angpix))
+                ko = 2*math.pi*self.radius_H*(X_index_oversample/(self.current_img_fft_amp_rotated.shape[1]*self.angpix))
+                ks = 2*math.pi*(self.radius_H-self.radius_error)*(X_index_oversample/(self.current_img_fft_amp_rotated.shape[1]*self.angpix))
+                kb = 2*math.pi*(self.radius_H+self.radius_error)*(X_index_oversample/(self.current_img_fft_amp_rotated.shape[1]*self.angpix))
                 Bessel_data = np.abs(special.jv(self.n_Bessel, k))
-                scale = amp_data.max()/Bessel_data.max()
-                Bessel_data = Bessel_data*scale
+                Bessel_data_o = np.abs(special.jv(self.n_Bessel, ko))
+                Bessel_data_l = np.abs(special.jv(self.n_Bessel, ks))
+                Bessel_data_h = np.abs(special.jv(self.n_Bessel, kb))
+                amp_data_max = amp_data.max()
+                scale_o = amp_data_max/Bessel_data_o.max()
+                scale_l = amp_data_max/Bessel_data_l.max()
+                scale_h = amp_data_max/Bessel_data_h.max()
+                Bessel_data_o = Bessel_data_o*scale_o
+                Bessel_data_l = Bessel_data_l*scale_l
+                Bessel_data_h = Bessel_data_h*scale_h
             cc_Bessel_vs_data = (np.corrcoef(Bessel_data, amp_data))[0,1]
             self.tab1_labels_col2['CC='].setText(f'CC={cc_Bessel_vs_data:.2f}')
     
             if self.LL_amp_plot == '':
                 self.LL_amp_plot, = self.ax_amp.plot(self.X_index, amp_data, color='b')
-                self.LL_bessel_plot, = self.ax_amp.plot(self.X_index, Bessel_data, color='r')
-                self.LL_legend = self.ax_amp.legend((self.LL_amp_plot, self.LL_bessel_plot), ('Data', 'Predict'), loc='upper right', fontsize=8)
+                self.LL_bessel_plot, = self.ax_amp.plot(X_index_oversample, Bessel_data_o, color='r')
+                self.LL_legend = self.ax_amp.legend((self.LL_amp_plot, self.LL_bessel_plot), ('Data', 'Predict'), loc='upper right', fontsize=7, handlelength=1)
             else:
                 self.LL_amp_plot.set_data(self.X_index, amp_data)
-                self.LL_bessel_plot.set_data(self.X_index, Bessel_data)
+                self.LL_bessel_plot.set_data(X_index_oversample, Bessel_data_o)
+            if self.LL_bessel_plot_fill_low != '':
+                self.LL_bessel_plot_fill_low.remove()
+                self.LL_bessel_plot_fill_low = ''
+                self.LL_bessel_plot_fill_high.remove()
+                self.LL_bessel_plot_fill_high = ''
+            self.LL_bessel_plot_fill_low = self.ax_amp.fill_between(
+                X_index_oversample, Bessel_data_l, Bessel_data_o, alpha=0.1, color='r', interpolate=True)
+            self.LL_bessel_plot_fill_high = self.ax_amp.fill_between(
+                X_index_oversample, Bessel_data_o, Bessel_data_h, alpha=0.1, color='r', interpolate=True)
             self.ax_amp.set_xlim(self.X_index[0], self.X_index[-1])
-            self.ax_amp.set_ylim(0, amp_data.max()*1.05)
+            self.ax_amp.set_ylim(0, amp_data.max()*1.15)
             
             X_original_index = self.X_index + int(self.current_img_fft_amp_rotated.shape[1]/2)
             phase_data = self.current_img_fft_phase[Y_phase, X_original_index[0]:X_original_index[-1]+1]
@@ -1699,6 +1742,7 @@ class MainWindow(QMainWindow):
         self.tab1_buttons_col2['Measure'].clicked.connect(self.measure_distance)
         self.tab1_buttons_col2['Calc LL plot'].clicked.connect(self.calc_LL_plot)
         self.tab1_text_col2['helix_radius'].returnPressed.connect(self.check_LL_plots_inputs)
+        self.tab1_text_col2['radius_error'].returnPressed.connect(self.check_LL_plots_inputs)
         self.tab1_text_col2['LL_Y_range'].returnPressed.connect(self.check_LL_plots_inputs)
         self.tab1_text_col2['LL_width'].returnPressed.connect(self.check_LL_plots_inputs)
         self.tab1_text_col2['Bessel_order'].returnPressed.connect(self.check_LL_plots_inputs)
