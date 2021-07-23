@@ -668,8 +668,6 @@ class MainWindow(QMainWindow):
         self.origin[1] = self.img_ydim/2
         self.reset_tab1_display()
         self.reset_tab2_display()
-        number_of_slice = self.mrc_data_array.shape[0]
-        self.slice_chooser.setMaximum(number_of_slice)
         self.setWindowTitle(f'Helical indexer: {mrc_file_name[0]}')
 
         self.draw_2d_image()
@@ -879,6 +877,8 @@ class MainWindow(QMainWindow):
         if self.power_spec_only == 0:
             self.slice_chooser.setEnabled(True)
             self.img_shift_chooser.setEnabled(True)
+            self.slice_chooser.setMaximum(self.mrc_data_array.shape[0])
+            self.img_shift_chooser.setRange(-self.img_xdim, self.img_xdim)
         elif self.power_spec_only == 1:
             self.slice_chooser.setEnabled(False)
             self.img_shift_chooser.setEnabled(False)
