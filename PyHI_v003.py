@@ -811,8 +811,8 @@ class MainWindow(QMainWindow):
             self.check_LL_plots_inputs()
             self.draw_tab1_LL()
 
-            self.tab2_spinboxes['Bessel_v1'].setValue(3)
-            self.tab2_spinboxes['Bessel_v2'].setValue(1)
+            self.tab2_spinboxes['Bessel_v1'].setValue(self.v1_n)
+            self.tab2_spinboxes['Bessel_v2'].setValue(self.v2_n)
             self.draw_tab2_lattice_lines()
 
         except:
