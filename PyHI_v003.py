@@ -1094,16 +1094,13 @@ class MainWindow(QMainWindow):
         self.clear_tab1_LL()
         try: 
             self.LL_distance = float(self.tab1_text_col1['Y_dist'].text())
-            n_LL = 41
+            x_label = 2*self.img_xdim/5
 
-            x_label = 2*self.current_img_fft_amp.shape[1]/5
-
-            for i in range(1, n_LL):
+            for i in range(1, int(self.img_ydim/(self.LL_distance*2))):
                 y = self.origin[1] + i*self.LL_distance
-                if y <= self.tab1_axfft.get_ylim()[1]:
-                    self.tab1_LL.append(self.tab1_axfft.axline((self.origin[0], y), slope=0, ls=':', color='orange', linewidth=0.5))
-                    if i%5 == 0:
-                        self.tab1_LL_label.append(self.tab1_axfft.annotate(str(i), (x_label, y), color='orange'))
+                self.tab1_LL.append(self.tab1_axfft.axline((self.origin[0], y), slope=0, ls=':', color='orange', linewidth=0.5))
+                if i%5 == 0:
+                    self.tab1_LL_label.append(self.tab1_axfft.annotate(str(i), (x_label, y), color='orange'))
             
             self.tab1_LL.append(self.tab1_axfft.axline((self.origin[0], self.origin[1]), slope=0, ls='-', color='orange', linewidth=0.5))
             self.tab1_LL.append(self.tab1_axfft.axline((self.origin[0], self.origin[1]), slope=math.inf, ls='-', color='orange', linewidth=0.5))
