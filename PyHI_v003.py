@@ -765,7 +765,7 @@ class MainWindow(QMainWindow):
                 f.write(f'Base vector 2:\n')
                 f.write(f'{"X_coord 2:":20s}{self.x_v2:10.2f}\n')
                 f.write(f'{"Y_coord 2:":20s}{self.y_v2:10.2f}\n')
-                f.write(f'{"Bessel order 2:":20s}{self.v2_n:10d}\n')
+                f.write(f'{"Bessel order 2:":20s}{abs(self.v2_n):10d}\n')
                 f.write(f'{"RS length:":20s}{self.length_v2_rs:10.2f}\n')
                 f.write(f'{"RS angle:":20s}{self.angle2_rs:10.2f}\n\n')
 
@@ -796,13 +796,10 @@ class MainWindow(QMainWindow):
             self.y_v1 = para_dict['Y_coord 1']
             self.x_v2 = para_dict['X_coord 2']
             self.y_v2 = para_dict['Y_coord 2']
-            self.v1_n = para_dict['Bessel order 1']
-            self.v2_n = para_dict['Bessel order 2']
+            v1_n = para_dict['Bessel order 1']
+            v2_n = para_dict['Bessel order 2']
             LL_distance = para_dict['Layerline distance']
             radius = para_dict['Helix radius']
-
-            self.origin_x_click_value = self.origin[0]
-            self.origin_y_click_value = self.origin[1]
 
             self.tab1_text_col1['Angpix'].setText(f'{angpix:.2f}')
             self.tab1_text_col1['Y_dist'].setText(f'{LL_distance:.2f}')
@@ -811,9 +808,10 @@ class MainWindow(QMainWindow):
             self.check_LL_plots_inputs()
             self.draw_tab1_LL()
 
-            self.tab2_spinboxes['Bessel_v1'].setValue(self.v1_n)
-            self.tab2_spinboxes['Bessel_v2'].setValue(self.v2_n)
+            self.tab2_spinboxes['Bessel_v1'].setValue(v1_n)
+            self.tab2_spinboxes['Bessel_v2'].setValue(v2_n)
             self.draw_tab2_lattice_lines()
+            self.opt_para()
 
         except:
             QMessageBox.information(self, 'Error', 'Check parameter file format!')                
