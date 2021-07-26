@@ -412,7 +412,7 @@ class MainWindow(QMainWindow):
 
     def class2D_window(self):
         self.fig2d, self.ax2d = plt.subplots()
-        self.fig2d.suptitle('2D class average', fontsize=10)
+        self.fig2d.suptitle('2D image', fontsize=10)
         self.ax2d.axis('off')
         self.ax2d.format_coord = lambda x, y: f'x={round(x)-self.origin[0]:.0f}, y={round(y)-self.origin[1]:.0f}'
         self.fig2d.tight_layout()
