@@ -5,9 +5,11 @@ This is a Python-based GUI program for indexing power spectra of helical assembl
 
 For example, you can download Miniconda from here:
 https://docs.conda.io/en/latest/miniconda.html
-Following the intruction to install the python 3 version of Miniconda. To activate the conda:
+
+Follow the intruction to install the python 3 version of Miniconda. To activate the conda:
 
 . /directory/to/miniconda/bin/activate 
+
 
 Now you can directly install the dependency packages by using commands such as:
 
@@ -17,9 +19,11 @@ Or you can create a virtual environment for PyHI:
 
 conda create --name PyHI
 
+
 To activate this new virtual environment:
 
 . /directory/to/miniconda/bin/activate PyHI
+
 
 Now you can install the packages within this envirnoment. To run PyHI, change to the directory where PyHI_v003.py resides and then:
 
