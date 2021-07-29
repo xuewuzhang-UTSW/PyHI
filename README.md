@@ -6,7 +6,7 @@ This is a Python-based GUI program for indexing power spectra of helical assembl
 For example, you can download Miniconda from here:
 https://docs.conda.io/en/latest/miniconda.html
 
-Follow the intruction to install the python 3 version of Miniconda. To activate the conda:
+Follow the intruction to install the python 3 version of Miniconda. To activate Conda:
 
 . /directory/to/miniconda/bin/activate 
 
