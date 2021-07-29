@@ -8,7 +8,7 @@ https://docs.conda.io/en/latest/miniconda.html
 
 Follow the intruction to install the python 3 version of Miniconda. To activate Conda:
 
-. /directory/to/miniconda/bin/activate 
+.  /directory/to/miniconda/bin/activate 
 
 
 Now you can directly install the dependency packages by using commands such as:
@@ -22,7 +22,7 @@ conda create --name PyHI
 
 To activate this new virtual environment:
 
-. /directory/to/miniconda/bin/activate PyHI
+.  /directory/to/miniconda/bin/activate PyHI
 
 
 Now you can install the packages within this envirnoment. To run PyHI, change to the directory where PyHI_v003.py resides and then:
