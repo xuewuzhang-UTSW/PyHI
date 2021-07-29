@@ -639,25 +639,34 @@ class MainWindow(QMainWindow):
 
     def open_2D_classes(self):
         self.power_spec_only = 0
-        mrc_file_name = QFileDialog.getOpenFileName(self, 'choose MRC', '.', filter='mrc file (*.mrc *.mrcs)')
-        if mrc_file_name[0] == '':
+        twoD_img_file_name = QFileDialog.getOpenFileName(self, 'choose 2D image(s)', '.', 
+                                                          filter="Image file (*.tiff *tif *.jpg *.png *jpeg *.mrc *.mrcs)")
+        if twoD_img_file_name[0] == '':
             return
         try:
-            with mrcfile.open(mrc_file_name[0]) as f:
-                self.mrc_data_array = f.data
-                if self.mrc_data_array.ndim == 2:
-                    self.mrc_data_array = self.mrc_data_array.reshape(1, self.mrc_data_array.shape[0], self.mrc_data_array.shape[1])
+            if '.mrc' in twoD_img_file_name[0]:
+                with mrcfile.open(twoD_img_file_name[0]) as f:
+                    self.mrc_data_array = f.data
+                    if self.mrc_data_array.ndim == 2:
+                        self.mrc_data_array = self.mrc_data_array.reshape(1, self.mrc_data_array.shape[0], self.mrc_data_array.shape[1])
      
-                try:
-                    y_pix = f.header.ny
-                    y_dim = f.header.cella.y
-                    self.angpix = y_dim/y_pix
-                    if self.angpix == 0:
+                    try:
+                        y_pix = f.header.ny
+                        y_dim = f.header.cella.y
+                        self.angpix = y_dim/y_pix
+                        if self.angpix == 0:
+                            self.angpix = 1
+                            QMessageBox.information(self, 'Alert', 'Could not read angpix\n Set to 1!')
+                    except:
                         self.angpix = 1
                         QMessageBox.information(self, 'Alert', 'Could not read angpix\n Set to 1!')
-                except:
-                    self.angpix = 1
-                    QMessageBox.information(self, 'Alert', 'Could not read angpix\n Set to 1!')
+            else:
+                self.mrc_data_array = Image.open(twoD_img_file_name[0])
+                self.mrc_data_array = ImageOps.flip(self.mrc_data_array)
+                self.mrc_data_array = np.asarray(self.mrc_data_array.convert('L'))
+                self.mrc_data_array = self.mrc_data_array.reshape(1, self.mrc_data_array.shape[0], self.mrc_data_array.shape[1])
+                self.angpix = 1
+                QMessageBox.information(self, 'Information', 'Reading non-MRC image\nAngpix set to 1\nManually set it if you know it')
         except:
             QMessageBox.information(self, 'Error', 'Not a valid mrc or mrcs file?')
             return
@@ -668,7 +677,7 @@ class MainWindow(QMainWindow):
         self.origin[1] = self.img_ydim/2
         self.reset_tab1_display()
         self.reset_tab2_display()
-        self.setWindowTitle(f'Helical indexer: {mrc_file_name[0]}')
+        self.setWindowTitle(f'Helical indexer: {twoD_img_file_name[0]}')
 
         self.draw_2d_image()
         self.draw_tab2_fft()
@@ -676,7 +685,7 @@ class MainWindow(QMainWindow):
     def load_power_spec(self):
         self.power_spec_only = 1
         power_spec_filename = QFileDialog.getOpenFileName(self, 'choose power spec image', '.', 
-                                                          filter="Image file (*.tiff *tif *.jpg *.png *jpeg *mrc)")
+                                                          filter="Image file (*.tiff *.tif *.jpg *.png *.jpeg *.mrc)")
         if power_spec_filename[0] == '':
             return
         
@@ -1647,7 +1656,7 @@ class MainWindow(QMainWindow):
             self.fig_rs_canvas.draw()
 
             self.labels_rs['Rise_Twist'].setText(
-                f'Rise={self.rise_rs_main:.2f} \u212B; Twist={self.twist_rs_main:.1f}\u00B0; {self.n_start_main}-start')
+                f'Rise={self.rise_rs_main:.2f} \u212B; Twist={self.twist_rs_main:.1f}\u00B0; C{self.n_start_main}')
                 
         except:
             QMessageBox.information(self, 'Error', 'Something wrong!\n At least two points needed.\n (0,0) point needed.')
