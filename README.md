@@ -8,7 +8,7 @@ https://docs.conda.io/en/latest/miniconda.html
 
 Follow the intruction to install the python 3 version of Miniconda. To activate Conda:
 
-source /directory/to/miniconda/bin/activate 
+$ source /directory/to/miniconda/bin/activate 
 
 
 Now you can directly install the dependency packages by using commands such as:
