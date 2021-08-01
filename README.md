@@ -13,20 +13,20 @@ $ source /directory/to/miniconda/bin/activate
 
 Now you can directly install the dependency packages by using commands such as:
 
-conda install numpy
+$ conda install numpy
 
 Or you can create a virtual environment for PyHI:
 
-conda create --name PyHI
+$ conda create --name PyHI
 
 
 To activate this new virtual environment:
 
-source /directory/to/miniconda/bin/activate PyHI
+$ source /directory/to/miniconda/bin/activate PyHI
 
 
 Now you can install the packages within this envirnoment. To run PyHI, change to the directory where PyHI_v003.py resides and then:
 
-python3 PyHI_v003.py
+$ python3 PyHI_v003.py
 
 
