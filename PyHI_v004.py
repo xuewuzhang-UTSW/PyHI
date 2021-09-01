@@ -1247,19 +1247,19 @@ class MainWindow(QMainWindow):
         self.tab1_labels_col1['Repeat distance:'].setText('Repeat distance:')
 
     def tab1_cursor_annotate(self):
-        self.tab1_fft_cursor = mplcursors.cursor(self.tab1_LL[:-2], multiple=True, bindings={'select':2})
-        @self.tab1_fft_cursor.connect('add')
-        def _(sel):
-            if sel.target[0] < self.current_img_fft_amp.shape[1]/2:
-                n_Bessel = ''.join(("-", self.tab1_text_col2['Bessel_order'].text()))
-                pos_x = sel.target[0] - 15
-                pos_y = sel.target[1] + 1
-            else:
-                n_Bessel = self.tab1_text_col2['Bessel_order'].text()
-                pos_x = sel.target[0] + 10 
-                pos_y = sel.target[1] + 1
-            sel.annotation.set(text=f'l={self.tab1_LL.index(sel.artist)+1}; n={n_Bessel}', position=[pos_x,pos_y])
-            sel.annotation.arrow_patch.set(arrowstyle='simple',fc='yellow', alpha=0.5)
+       self.tab1_fft_cursor = mplcursors.cursor(self.tab1_LL[:-2], multiple=True, bindings={'select':2})
+       @self.tab1_fft_cursor.connect('add')
+       def _(sel):
+           if sel.target[0] < self.current_img_fft_amp.shape[1]/2:
+               n_Bessel = ''.join(("-", self.tab1_text_col2['Bessel_order'].text()))
+               pos_x = sel.target[0] - 15
+               pos_y = sel.target[1] + 1
+           else:
+               n_Bessel = self.tab1_text_col2['Bessel_order'].text()
+               pos_x = sel.target[0] + 10 
+               pos_y = sel.target[1] + 1
+           sel.annotation.set(text=f'l={self.tab1_LL.index(sel.artist)+1}; n={n_Bessel}', position=[pos_x,pos_y])
+           sel.annotation.arrow_patch.set(arrowstyle='simple',fc='yellow', alpha=0.5)
 
     def get_tab2_line_parameter_box_values(self):
         self.n_lines1 = self.tab2_spinboxes['n_upper_v1'].value()
@@ -1438,6 +1438,9 @@ class MainWindow(QMainWindow):
             X_original_index = self.X_index + int(self.current_img_fft_amp_rotated.shape[1]/2)
             phase_data = self.current_img_fft_phase[Y_phase, X_original_index[0]:X_original_index[-1]+1]
             phase_data = 180*phase_data/np.pi
+            print('********************************')
+            print('Phases of the plotted pixels:\n')
+            print(f'{phase_data}\n')
             phase_diff = np.abs(phase_data - phase_data[::-1])
             phase_diff = [i if i <= 180 else 360 - i for i in phase_diff]
 
