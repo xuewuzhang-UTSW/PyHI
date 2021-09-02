@@ -995,7 +995,7 @@ class MainWindow(QMainWindow):
         if self.oneD_profile_of_2dimage == None:
             self.oneD_profile_of_2dimage =(self.ax2d.plot(oneD_profile_array, '-', color='cyan', lw=0.5))[0]
         else:
-            self.oneD_profile_of_2dimage.set_data(np.arange(len(oneD_profile_array)), oneD_profile_array)
+            self.oneD_profile_of_2dimage.set_data(np.arange(self.img_xdim), oneD_profile_array)
 
         self.twoD_img_shown.set_clim(min, max)
         self.fig2d_canvas.draw()
