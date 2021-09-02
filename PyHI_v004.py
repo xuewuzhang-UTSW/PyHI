@@ -89,6 +89,7 @@ class MainWindow(QMainWindow):
         self.mrc_data_array = None
         self.twoD_img_shown = None
         self.midpoint_of_2dimage = None
+        self.oneD_profile_of_2dimage = None
         self.tab1_fft_shown = None
         self.measure_on = False
         self.tab1_LL_draw_on = False
@@ -854,6 +855,8 @@ class MainWindow(QMainWindow):
             self.twoD_img_shown = None
             self.midpoint_of_2dimage.remove()
             self.midpoint_of_2dimage = None
+            self.oneD_profile_of_2dimage.remove()
+            self.oneD_profile_of_2dimage = None
             self.fig2d_canvas.draw()
         if self.tab1_fft_shown is not None:
             self.tab1_fft_shown.remove()
@@ -985,6 +988,14 @@ class MainWindow(QMainWindow):
                 [self.img_xdim/2-0.5, self.img_xdim/2-0.5], [0, self.img_ydim-1], '-', color='b', lw=0.5))[0]
         else:
             self.midpoint_of_2dimage.set_data([self.img_xdim/2-0.5, self.img_xdim/2-0.5], [0, self.img_ydim-1])
+
+        oneD_profile_array = np.sum(img_array, axis=0) 
+        oneD_profile_array = oneD_profile_array - oneD_profile_array.min()   
+        oneD_profile_array = oneD_profile_array*(0.1*self.img_ydim/oneD_profile_array.max())
+        if self.oneD_profile_of_2dimage == None:
+            self.oneD_profile_of_2dimage =(self.ax2d.plot(oneD_profile_array, '-', color='cyan', lw=0.5))[0]
+        else:
+            self.oneD_profile_of_2dimage.set_data(np.arange(len(oneD_profile_array)), oneD_profile_array)
 
         self.twoD_img_shown.set_clim(min, max)
         self.fig2d_canvas.draw()
