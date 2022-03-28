@@ -232,7 +232,7 @@ class MainWindow(QMainWindow):
         }
 
         self.minSigma_chooser = QSlider(QtCore.Qt.Horizontal)
-        self.minSigma_chooser.setMinimum(-30.5)
+        self.minSigma_chooser.setMinimum(-31)
         self.minSigma_chooser.setMaximum(30)
         self.minSigma_chooser.setValue(-1)
         self.minSigma_chooser.setFixedWidth(200)
@@ -241,7 +241,7 @@ class MainWindow(QMainWindow):
 
         self.maxSigma_chooser = QSlider(QtCore.Qt.Horizontal)
         self.maxSigma_chooser.setMinimum(-30)
-        self.maxSigma_chooser.setMaximum(30.5)
+        self.maxSigma_chooser.setMaximum(31)
         self.maxSigma_chooser.setValue(8)
         self.maxSigma_chooser.setFixedWidth(200)
         layout.addWidget(self.maxSigma_chooser, 1, 1, 1, 2)
@@ -1359,13 +1359,13 @@ class MainWindow(QMainWindow):
             contrast_high = self.maxSigma_chooser.value() 
             contrast_low = n
             if contrast_high <= contrast_low:
-                contrast_high = contrast_low + 0.5
+                contrast_high = int(contrast_low + 1)
                 self.maxSigma_chooser.setValue(contrast_high)
         elif id == 'high':
             contrast_low = self.minSigma_chooser.value()
             contrast_high = n
             if contrast_high <= contrast_low:
-                contrast_low = contrast_high - 0.5
+                contrast_low = int(contrast_high - 1)
                 self.minSigma_chooser.setValue(contrast_low)
         min = round(self.current_img_fft_amp_rotated.mean() + contrast_low*self.current_img_fft_amp_rotated.std(), 1)
         max = round(self.current_img_fft_amp_rotated.mean() + contrast_high*self.current_img_fft_amp_rotated.std(), 1)
@@ -1450,7 +1450,7 @@ class MainWindow(QMainWindow):
             phase_data = self.current_img_fft_phase[Y_phase, X_original_index[0]:X_original_index[-1]+1]
             phase_data = 180*phase_data/np.pi
             print('********************************')
-            print('Phases of the plotted pixels:\n')
+            print('Phases of the plotted pixels:')
             print(f'{phase_data}\n')
             phase_diff = np.abs(phase_data - phase_data[::-1])
             phase_diff = [i if i <= 180 else 360 - i for i in phase_diff]
