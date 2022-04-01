@@ -33,6 +33,6 @@ $ source /directory/to/miniconda/bin/activate PyHI
 
 Now you can install the packages within this envirnoment. To run PyHI, change to the directory where PyHI_v003.py resides and then:
 
-$ python3 PyHI_v003.py
+$ python3 PyHI_v004.py
 
 
