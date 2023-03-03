@@ -7,6 +7,10 @@ https://www.youtube.com/watch?v=KxAeo90CIt4
 A more detailed description can be found at (Citation:Xuewu Zhang, Protein Sci. 2021. doi: 10.1002/pro.4186):
 https://onlinelibrary.wiley.com/doi/10.1002/pro.4186
 
+
+Note: V005 addes a new tab which generates a 3D representation of the helix and Relion command for making initial model. This needs a newer version of Matplotlib (>3.6).
+
+
 This is a Python-based GUI program for indexing power spectra of helical assemblies. The program is a Python script that runs under Python version 3.7. The script depends on the following Python libraries: Mrcfile 1.1.2 (Burnley et al., 2017), numpy 1.18.3 (Harris et al., 2020), matplotlib 3.3.1 (Hunter, 2007), Pillow 7.2.0 (https://pillow.readthedocs.io/en/stable/), PyQt5 5.15.0 (https://pypi.org/project/PyQt5/), SciPy 1.4.1 (Virtanen et al., 2020) and mplsursors 0.4 (https://mplcursors.readthedocs.io/en/stable/). These libraries can be installed on modern operating systems with standard Python library management tools such as PIP (Python Package Installer; https://pip.pypa.io/en/stable/) and anaconda (https://docs.conda.io/en/latest/). 
 
 For example, you can download Miniconda from here:
