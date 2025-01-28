@@ -798,7 +798,7 @@ class MainWindow(QMainWindow):
                 with mrcfile.open(power_spec_filename[0], permissive=True) as f:
                     self.current_img_fft_amp = f.data
                     if self.current_img_fft_amp.ndim == 2:
-                        self.current_img_fft_amp = self.current_img_fft_amp.reshape(1, self.current_img_fft_amp.shape[0], self.current_img_fft_amp[1])
+                        self.current_img_fft_amp = self.current_img_fft_amp.reshape(1, self.current_img_fft_amp.shape[0], self.current_img_fft_amp.shape[1])
                     try:
                         y_pix = f.header.ny
                         y_dim = f.header.cella.y
