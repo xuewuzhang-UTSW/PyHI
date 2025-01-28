@@ -1,6 +1,6 @@
 # PyHI
 V006: Tab1: can read stacks (.mrc or .mrcs) of power spectra; Tab2: can highlight Bessel peaks and their Bessel orders based on the current refined lattice. 
-(Note on 1/28/2025: Thanks to Ruizhi Peng, a bug was noticed and fixed).
+(Note on 1/28/2025: Thanks to Ruizhi Peng, a bug (issue #5) was noticed and fixed).
 
 Note: V005 addes a new tab which generates a 3D representation of the helix and Relion command for making initial model. This needs a newer version of Matplotlib (>3.6).
 
