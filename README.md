@@ -1,6 +1,6 @@
 # PyHI
 V007: It now can read a 3D map from a helical reconstruction, and generate 2D projection images and power spectra. It is useful for learning. 
-Also fixed a bug that leads to incorrect calculation of the displayed repeate distance in Tab1 (which did affect the indexing or the final outputs of rise and twist).
+Also fixed a bug that leads to incorrect calculation of the displayed repeat distance in Tab1 (which did affect the indexing or the final outputs of rise and twist).
 
 New version of the average power spectrum calculator, allowing specifiying the rotation angle of particles to correct imperfect alignmment of 2D class average to the horizontal axis from RELION. Also added multiprocessing to make it run faster.
 
