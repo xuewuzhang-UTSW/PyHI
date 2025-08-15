@@ -48,8 +48,8 @@ with open(star_file_name) as f:
             tmp_name = re.search(r'@(.+\.mrc)s', line)
             tmp_name = tmp_name.group(1)
             mrc_base_name = tmp_name.split('/')[-1].split('.')[0]
-            # this angle should be adjust based on the orientation of the 2D class averge, if it is horizon, set --rotate to -90 
-            # we can measure the angle in PyHI to find how much rotation is acutally needed to rotate the y-axis to align with the filament
+            # this angle should be adjusted based on the orientation of the 2D class average, if it is horizontal, set --rotate to -90
+            # we can measure the angle in PyHI to find how much rotation is actually needed to rotate the y-axis to align with the filament
             #(y-axis rotation in CCW direction is positive according to RELION convention)
             rotation_angle = -float(line.split()[angle_field_number]) + args.rotate
             for field in line.split():
