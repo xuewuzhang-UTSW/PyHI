@@ -10,11 +10,16 @@ import argparse
 import multiprocessing
 
 parser = argparse.ArgumentParser()
+parser.add_argument('-r', '--rotate', default=-90, type=float, help="""
+Rotate the paricle image by this angle.
+If the 2D class average from RELION is well aligned horizontally, set this value to -90.
+Otherwise, open the 2D class average in PyHI, adjust the rotate img parameter until the image is vertially aligned.
+Then set the -r to the value of the rotation angle.
+                    """)
 parser.add_argument('-i', '--input_star', required=1, type=str, help='input particle star file')
 parser.add_argument('-d', '--particle_dir', required=1, type=str, help='diretory of particle stack mrcs files')
 parser.add_argument('-p', '--pad_factor', default=1, type=int, help='pad 2D image with zeros by this factor')
 parser.add_argument('-o', '--oversample_factor', default=1, type=int, help='oversample FFT by this factor')
-parser.add_argument('-r', '--rotate', default=-90, type=float, help='rotate the paricle image by this angle')
 parser.add_argument('-s', '--symmetrize', default=0, type=int, choices=[0, 1], help='Set to 1 to not symmetrize the power spectrum')
 #symmetrizing the power spectrum would mess things up if the particles are not perfectly aligned, making powwer spectrum look symmetric and vertical
 # although it is acutally not symmmetric
@@ -31,7 +36,6 @@ n_processes = args.processes
 output_mrc = star_file_name.split('.')[0]
 output_mrc = f'{output_mrc}_pad{pad_factor}_oversample{oversample_factor}_average_power_spec.mrc'
 
-fft_stack = 0
 particle_dic = {}
 total_particle_count = 0
 ang_pix = 1
@@ -48,9 +52,6 @@ with open(star_file_name) as f:
             tmp_name = re.search(r'@(.+\.mrc)s', line)
             tmp_name = tmp_name.group(1)
             mrc_base_name = tmp_name.split('/')[-1].split('.')[0]
-            # this angle should be adjusted based on the orientation of the 2D class average, if it is horizontal, set --rotate to -90
-            # we can measure the angle in PyHI to find how much rotation is actually needed to rotate the y-axis to align with the filament
-            #(y-axis rotation in CCW direction is positive according to RELION convention)
             rotation_angle = -float(line.split()[angle_field_number]) + args.rotate
             for field in line.split():
                 if '@' in field:
@@ -69,9 +70,11 @@ def process_particle(args):
     fft_slice_amp = np.abs(np.fft.fftshift(np.fft.fft2(img_slice_rotated)))
     if oversample_factor > 1:
         fft_slice_amp = ndimage.zoom(fft_slice_amp, oversample_factor)
-    return fft_slice_amp
+    return fft_slice_amp, img_slice_rotated
 
 process_count = 0
+rotated_stack = 0
+fft_stack = 0
 particle_stack_files = particle_stack_dir + '/*.mrcs'
 for mrcs in glob.glob(particle_stack_files):
     mrc_base_name = mrcs.split('/')[-1].split('.')[0]
@@ -95,12 +98,14 @@ for mrcs in glob.glob(particle_stack_files):
         with multiprocessing.Pool(processes=n_processes) as pool:
             results = pool.map(process_particle, process_args)
 
-        for fft_slice_amp in results:
+        for fft_slice_amp, img_slice_rotated in results:
             process_count += 1
             if type(fft_stack) is np.ndarray:
                 fft_stack = fft_stack + fft_slice_amp
+                rotated_stack = rotated_stack + img_slice_rotated
             else:
                 fft_stack = fft_slice_amp
+                rotated_stack = img_slice_rotated
             print(f'Processed {process_count} out of {total_particle_count} particles in the star file')
 
 fft_average = fft_stack/process_count
@@ -118,6 +123,16 @@ with mrcfile.new(output_mrc, overwrite=True) as f:
     f.set_data(fft_average.astype('float32'))
     f.header.cella = (x_ang, y_ang, 0)
     print(f'\nSaved average power spectrum for {process_count} particles')
+
+
+# Save average rotated real-space image
+output_rotated_mrc = star_file_name.split('.')[0]
+output_rotated_mrc = f'{output_rotated_mrc}_pad{pad_factor}_oversample{oversample_factor}_average_rotated_realspace.mrc'
+rotated_average = rotated_stack / process_count
+with mrcfile.new(output_rotated_mrc, overwrite=True) as f:
+    f.set_data(rotated_average.astype('float32'))
+    f.header.cella = (x_ang, y_ang, 0)
+    print(f'Saved average rotated real-space image for {process_count} particles')
 
 fig, ax = plt.subplots()
 ax.imshow(fft_average)
