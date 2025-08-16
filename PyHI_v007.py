@@ -17,7 +17,6 @@ from PyQt5.QtGui import QGuiApplication
 import PyQt5.QtCore as QtCore
 import matplotlib.backends.backend_qt5agg as plt_qtbackend
 import mrcfile
-from numpy.core.fromnumeric import ndim
 from scipy.optimize import minimize
 from scipy import ndimage, spatial, special, signal
 
