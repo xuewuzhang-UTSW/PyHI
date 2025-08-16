@@ -2,7 +2,7 @@
 V007: It now can read a 3D map from a helical reconstruction, and generate 2D projection images and power spectra. It is useful for learning. 
 Also fixed a bug that leads to incorrect calculation of the displayed repeat distance in Tab1 (which did affect the indexing or the final outputs of rise and twist).
 
-New version of the average power spectrum calculator, allowing specifiying the rotation angle of particles to correct imperfect alignmment of 2D class average to the horizontal axis from RELION. Also added multiprocessing to make it run faster.
+New version of the average power spectrum calculator, allowing specifiying the rotation angle of particles to correct imperfect alignmment of 2D class average to the horizontal axis from RELION. Also added multiprocessing to make it run faster, and it now also write out a realspace image of the 2D average.
 
 V006: Tab1: can read stacks (.mrc or .mrcs) of power spectra; Tab2: can highlight Bessel peaks and their Bessel orders based on the current refined lattice. 
 (Note on 1/28/2025: Thanks to Ruizhi Peng, a bug (issue #5) was noticed and fixed).
